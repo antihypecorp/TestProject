@@ -1,5 +1,8 @@
 package com.example.korzhik.testproject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -36,7 +39,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
-    String t;
+
+
+    public static final String APP_PREFERENCES = "Quest_cash";
+    public static final String APP_PREFERENCES_NAME = "Nickname";
+    public static final String APP_PREFERENCES_DESCRIPTION = "Description";
+    public static final String APP_PREFERENCES_TEXT = "Text";
+    public static final String APP_PREFERENCES_AGELEVEL = "Level";
+    SharedPreferences mSettings;
+
 
     @Override                                                                                       //первый звпуск
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +61,15 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, new HomeFragment())
                 .commit();
 
+        navigation.setSelectedItemId(R.id.navigation_home);
 
-
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        Editor editor = mSettings.edit();
+        editor.putString(APP_PREFERENCES_NAME, "@string/id101_names");
+        editor.putString(APP_PREFERENCES_DESCRIPTION, "@string/id101_short_description");
+        editor.putString(APP_PREFERENCES_TEXT, "@string/id101_long_description");
+        editor.apply();
+        editor.commit();
     }
 
 }
