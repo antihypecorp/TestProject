@@ -1,7 +1,9 @@
 package com.example.korzhik.testproject;
 
 import android.app.Application;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -26,7 +28,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HomeFragment extends Fragment {//начальный экран
+public class HomeFragment extends Fragment implements LifecycleOwner {//начальный экран
 
     String name = "name";
     ConstraintLayout exs[] = new ConstraintLayout[5];
@@ -95,48 +97,16 @@ public class HomeFragment extends Fragment {//начальный экран
                 }
                 LiveData<List<QuestCard>> liveData = questCardRepository.getAllQuestCards();
 
-                outputQuestCard = liveData.getValue();
+                liveData.observe(HomeFragment.this, new Observer<List<QuestCard>>() {
+                    @Override
+                    public void onChanged(@Nullable List<QuestCard> questCards) {
+                        for (int i = 0; i < 5; ++i) {
+                            tvs_names[i].setText(questCards.get(i).getName());
+                            tvs_shorts[i].setText(questCards.get(i).getShort_info());
+                        }
+                    }
+                });
 
-
-                for (int i = 0; i < 5; ++i) {
-                    tvs_names[i].setText(outputQuestCard.get(i).getName());
-                    tvs_shorts[i].setText(outputQuestCard.get(i).getShort_info());
-                }
-
-
-//                MyApplication ma = new MyApplication();
-//                ma.onCreate();
-//                mt = new MyTask();
-//                mt.execute();
-
-
-//                Log.d("MyLog", "BD CREATED");
-//                for (int i = 0; i < 5; ++i) {
-//                    tvs_names[i].setText(outputQuestCard.get(i).getName());
-//                    tvs_shorts[i].setText(outputQuestCard.get(i).getShort_info());
-//                }
-
-
-                // showNames.add(qcForeach.getName());
-                //showShortInfos.add(qcForeach.getShort_info());
-                //showFullInfos.add(qcForeach.getFull_info());
-
-                // ВРЕМЕННО: листы с полученными с сервера значениями имен и описаний
-//                ArrayList<String> showNames = new ArrayList<String>();
-//                ArrayList<String> showShortInfos = new ArrayList<String>();
-//                ArrayList<String> showFullInfos = new ArrayList<String>();
-//                // пушинг в листы
-//                for (QuestCard qcForeach : questCard) {
-//                    showNames.add(qcForeach.getName());
-//                    showShortInfos.add(qcForeach.getShort_info());
-//                    showFullInfos.add(qcForeach.getFull_info());
-//                }
-//
-//                for (int i = 0; i < 5; ++i) {
-//                    tvs_names[i].setText(showNames.get(i));
-//                    tvs_shorts[i].setText(showShortInfos.get(i));
-//                }
-//
             }
 
             @Override
@@ -151,6 +121,28 @@ public class HomeFragment extends Fragment {//начальный экран
             exs[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    switch (supView.getId()) {
+                        case R.id.ex_1:
+                            Intent intentFirst = new Intent(
+                                    getActivity(),
+                                    QuestActivity.class);
+                            intentFirst.putExtra("idtp", "1");
+                            getActivity().startActivity(intentFirst);
+
+                            break;
+
+                        case R.id.ex_2:
+                            Intent intentSecond = new Intent(
+                                    getActivity(),
+                                    QuestActivity.class);
+                            intentSecond.putExtra("idtp", "2");
+                            startActivity(intentSecond);
+
+                            break;
+
+
+                    }
+
                     Intent intent = new Intent(getActivity(), QuestActivity.class);
                     intent.putExtra(QuestActivity.KEY_NAME, name);
                     startActivity(intent);
@@ -160,29 +152,6 @@ public class HomeFragment extends Fragment {//начальный экран
         return supView;
     }
 
-//    class MyTask extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            for (QuestCard qcForeach : questCard) {
-//                Log.d("MyLog", "qur");
-//
-//                MyApplication
-//                        .getInstance()
-//                        .getDatabase()
-//                        .getQuestCardDAO()
-//                        .insertAll(qcForeach);
-//
-//            }
-//            return null;
-//        }
-//
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//        }
-//
-//    }
+
 
 }
